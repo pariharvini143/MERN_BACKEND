@@ -1,4 +1,3 @@
-
 // server/routes/mealPlanRoutes.js
 const express = require('express');
 const { generateNewMealPlan, getMealPlan } = require('../controllers/mealPlanController');

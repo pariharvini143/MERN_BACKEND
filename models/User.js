@@ -4,7 +4,15 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    // Password is no longer 'required' as users can log in via Google or OTP/email.
+    // It will be null or an empty string for users who don't set a password directly.
+    password: { type: String }, 
+    googleId: {
+        type: String,
+        unique: true, // Ensures each Google ID is unique
+        sparse: true  // Allows multiple documents to have null for this field.
+                      // Important if you have users without googleId, e.g., OTP users.
+    },
     weight: { type: Number, default: 0 },
     height: { type: Number, default: 0 },
     age: { type: Number, default: 0 },
@@ -18,5 +26,9 @@ const UserSchema = new mongoose.Schema({
     tdee: { type: Number, default: 0 }, // Total Daily Energy Expenditure
     bmi: { type: Number, default: 0 }
 });
+
+// --- Schema Validation (Pre-save hook) ---
+// This ensures that a user document must have EITHER a password OR a googleId.
+// This prevents creating a user without any authentication method defined.
 
 module.exports = mongoose.model('User', UserSchema);

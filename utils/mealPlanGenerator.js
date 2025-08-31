@@ -33,19 +33,19 @@ exports.generateMealPlan = async (user, planType) => {
     }
     const uniqueSeed = new Date().getTime();
 
-
+    
     const dietaryText = user.isVegetarian ? 'The meals must be strictly vegetarian.' : 'The meals can include meat, poultry, and fish.';
-
+    
     // Prompt structure for daily plan
-    let dailyPlanPrompt = `
+        let dailyPlanPrompt = `
         Create a 3-meal plan for a day (breakfast, lunch, and dinner) for a person with the following details.
         The **total daily calorie intake for all three meals combined must be as close as possible to ${targetCalories} kcal.**
         The meals should be balanced to meet the target calories.
         
-        **CRITICAL INSTRUCTION:** The **total daily calorie intake for all three meals combined MUST be EXACTLY ${targetCalories} kcal. If not exactly, it should be within a very narrow range of +/- 50 kcal.**
         ${dietaryText}
         Each meal should have a realistic recipe with ingredients and step-by-step instructions.
-       
+        
+
         At least one meal must feature a traditional Indian dish (e.g., poha, idli, dal, roti, curry, biryani, dosa, etc.).
         Ensure cuisines are varied — mix Indian and non-Indian meals in the day.
         Do NOT repeat any recipe in the same plan.
@@ -83,7 +83,6 @@ exports.generateMealPlan = async (user, planType) => {
         }
     `;
 
-
     // Prompt structure for weekly plan
     let weeklyPlanPrompt = `
         Create a balanced 7-day (Monday to Sunday) meal plan for a person with the following details.
@@ -93,7 +92,6 @@ exports.generateMealPlan = async (user, planType) => {
         ${dietaryText}
         Each meal should have a realistic recipe with ingredients and step-by-step instructions.
         
-
         For each recipe, include a high-quality, relevant image URL from a reliable source. The image URL should be direct and link to the image file itself (e.g., ending in .jpg, .png).
 
         User Profile:
@@ -137,7 +135,7 @@ exports.generateMealPlan = async (user, planType) => {
         const response = await result.response;
         let text = response.text();
         text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-
+        
         let mealPlanData;
         try {
             mealPlanData = JSON.parse(text);
@@ -149,7 +147,7 @@ exports.generateMealPlan = async (user, planType) => {
 
         // Return the appropriate data structure based on plan type
         if (planType === 'weekly') {
-            // Validate weekly plan structure
+             // Validate weekly plan structure
             if (!mealPlanData.weeklyPlan || !Array.isArray(mealPlanData.weeklyPlan) || mealPlanData.weeklyPlan.length !== 7) {
                 console.error('Generated meal plan is not a valid weekly plan:', mealPlanData);
                 throw new Error('Generated weekly meal plan is not valid.');
@@ -169,8 +167,3 @@ exports.generateMealPlan = async (user, planType) => {
         throw new Error('Failed to generate meal plan with AI.');
     }
 };
-
-
-
-
-

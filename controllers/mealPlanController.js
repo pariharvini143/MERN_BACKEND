@@ -1,6 +1,3 @@
-
-
-
 // server/controllers/mealPlanController.js
 const User = require('../models/User');
 const MealPlan = require('../models/MealPlan');
@@ -16,7 +13,7 @@ exports.generateNewMealPlan = async (req, res) => {
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        // generateMealPlan से सही डेटा स्ट्रक्चर को डीकंस्ट्रक्ट करो
+        // generateMealPlan destructured
         const { tdee, meals } = await generateMealPlan(user);
 
         // Check if meals array is valid before proceeding
@@ -27,7 +24,7 @@ exports.generateNewMealPlan = async (req, res) => {
         // Save generated recipes to the database
         const savedRecipes = await Promise.all(
             meals.map(async (meal) => {
-                const recipeData = meal.recipe; // recipe data को meal object से निकालो
+                const recipeData = meal.recipe; 
                 const newRecipe = new Recipe({
                     user: user._id,
                     title: recipeData.title,
@@ -43,7 +40,7 @@ exports.generateNewMealPlan = async (req, res) => {
         // Update meals with saved recipe IDs
         const updatedMeals = meals.map((meal, index) => ({
             mealType: meal.mealType,
-            recipe: savedRecipes[index]._id // recipe ID को meal object में जोड़ो
+            recipe: savedRecipes[index]._id 
         }));
 
         // Check if meal plan already exists for the user and update or create
@@ -63,7 +60,7 @@ exports.generateNewMealPlan = async (req, res) => {
             await mealPlanDoc.save();
         }
 
-        // Final meal plan document को front-end पर वापस भेजो
+        // Final meal plan document paas to the front-end 
         const finalMealPlan = await MealPlan.findById(mealPlanDoc._id).populate('meals.recipe');
 
         return res.status(200).json(finalMealPlan); 
